@@ -83,6 +83,7 @@ WSGI_APPLICATION = 'hvuserservice.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': env('DATABASE_BACKEND', default='django.db.backends.mysql'),
+        'CONN_MAX_AGE': 0,
         'NAME': env('DATABASE_NAME'),
         'USER': env('DATABASE_USER'),
         'PASSWORD': env('DATABASE_PASSWORD', default=''),

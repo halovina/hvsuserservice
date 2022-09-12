@@ -8,4 +8,4 @@ class LoginSerializer(serializers.Serializer):
 class ProductSerializer(serializers.Serializer):
    name = serializers.CharField(max_length=150)
    price = serializers.IntegerField()
-   status = serializers.CharField(allow_empty=True)
+   status = serializers.CharField(allow_blank=True)

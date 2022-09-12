@@ -15,6 +15,7 @@ def getListProduct():
     prd = Product.objects.all()
     for vprd in prd:
         data = {}
+        data['id'] = vprd.id
         data['name'] = vprd.name
         data['price'] = vprd.price
         data['status'] = vprd.status
@@ -23,6 +24,7 @@ def getListProduct():
     return lst
 
 def createProduct(data):
+    productId = None
     try:
         product = Product(
             name = data['name'],
@@ -30,26 +32,25 @@ def createProduct(data):
             status = data['status']
         )
         product.save()
-        connection.close()
         
         response_status_code = "00"
-        message = "Create product success"
+        message = "Create product ({}) success".format(data['name'])
+        productId = product.id
     except Exception as e:
         response_status_code = "-1"
         message = str(e)
-    return response_status_code, message
+    return response_status_code, message, productId
     
 def updateProduct(productId, data):
     try:
-        product = Product.obejcts.get(id=productId)
-        product.name = data['name'],
-        product.price = data['price'],
+        product = Product.objects.get(id=productId)
+        product.name = data['name']
+        product.price = data['price']
         product.status = data['status']
         product.save()
-        connection.close()
         
         response_status_code = "00"
-        message = "Update product success"
+        message = "Update product ({}) success".format(data['name'])
     except Exception as e:
         response_status_code = "-1"
         message = str(e)
@@ -57,9 +58,14 @@ def updateProduct(productId, data):
     
 def deleteProduct(productId):
     try:
-        Product.objects.filter(id=productId).delete()
-        response_status_code = "00"
-        message = "Delete product success"
+        prd = Product.objects.filter(id=productId)
+        if len(prd) > 0:
+            prd.delete()
+            response_status_code = "00"
+            message = "Delete product ({}) success".format(productId)
+        else:
+            response_status_code = "-1"
+            message = "Data productId ({}) tidak ditemukan".format(productId)
     except Exception as e:
         response_status_code = "-1"
         message = str(e)
