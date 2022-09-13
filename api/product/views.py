@@ -3,12 +3,15 @@ from rest_framework.parsers import JSONParser
 from django.http import JsonResponse
 from product.views import checkProduct, getListProduct, createProduct, updateProduct, deleteProduct
 from api.serializers import ProductSerializer
+from django.utils.decorators import method_decorator
+from api.decorators import auth_user_token
 
 common_response = {
     "message":"Service Request Success",
     "status":"00"
 }
 class ProductView(APIView):
+    @method_decorator(auth_user_token)
     def get(self, *args, **kwargs):
         try:
             lst = getListProduct()

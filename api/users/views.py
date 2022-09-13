@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework.views import APIView
 from api.serializers import LoginSerializer
 from rest_framework.parsers import JSONParser
@@ -13,7 +14,14 @@ class LoginView(APIView):
             serializer = LoginSerializer(data=data)
             if serializer.is_valid():
                 if checkUserLogin(data['email'],data['password']):
-                    token = jwtEncode({ "email": data['email'], "time": timezone.now().strftime("%Y-%m-%d %H:%M:%S %z") })
+                    current_time = datetime.now()
+                    current_unix_time = current_time.timestamp()
+                    expired_time = current_unix_time + (1 * 60)
+                    token = jwtEncode({
+                        "email": data['email'],
+                        "time": timezone.now().strftime("%Y-%m-%d %H:%M:%S %z"),
+                        "expired_time": expired_time
+                    })
                     return JsonResponse(data = {
                         "message": "Sucess",
                         "token": token
