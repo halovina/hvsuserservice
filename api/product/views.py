@@ -22,6 +22,7 @@ class ProductView(APIView):
             common_response["status"] = "-1"
         return JsonResponse(common_response, status=400)
     
+    @method_decorator(auth_user_token)
     def post(self, *args, **kwargs):
         try:
             data = JSONParser().parse(self.request)
@@ -41,7 +42,8 @@ class ProductView(APIView):
             common_response["message"] = str(e)
             common_response["status"] = "-1"
         return JsonResponse(common_response, status=400)
-        
+    
+    @method_decorator(auth_user_token)    
     def put(self, request, key, *args, **kwargs):
         try:
             data = JSONParser().parse(self.request)
@@ -62,6 +64,7 @@ class ProductView(APIView):
             common_response["status"] = "-1"
         return common_response
     
+    @method_decorator(auth_user_token)
     def delete(self, request, key, *args, **kwargs):
         try:
             message, status = deleteProduct(key)
