@@ -33,6 +33,7 @@ class LoginView(APIView):
             else:
                 return JsonResponse(serializer.errors, status=400)
         except Exception as e:
+            print(str(e))
             return JsonResponse(data = {
                             "message": str(e)
                         }, status=400)
