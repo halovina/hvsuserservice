@@ -54,3 +54,30 @@ class ProductTest(APITestCase, URLPatternsTestCase):
         response = self.client.get(url_prod, **{ "HTTP_AUTHORIZATION": "{}".format(rsp['token']) })
         self.assertEqual(response.status_code, 200)
         
+    def test_bulk_insert_success(self):
+        createMockUser()
+        payload_login = {
+            "email":"admin@example.com",
+            "password":"testXyz123"
+        }
+        rsp = getAuthToken(self,payload_login).json()
+        
+        payload_create_product = [
+            {
+                "name":"product bulk 1",
+                "price": 1000,
+                "status": "PENDING"
+            },
+            {
+                "name":"product bulk 2",
+                "price": 2000,
+                "status": "PUBLISH"
+            }
+        ]
+        response = self.client.post("/api/v1/product/",data=payload_create_product, format='json', **{ "HTTP_AUTHORIZATION": "{}".format(rsp['token']) })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['data'][0]['name'], 'product bulk 1')
+    
+    
+        
+        

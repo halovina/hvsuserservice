@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
 from django.http import JsonResponse
-from product.views import checkProduct, getListProduct, createProduct, updateProduct, deleteProduct
+from product.views import (checkProduct, getListProduct, createProduct, 
+                           updateProduct, deleteProduct, product_bulk_insert)
 from api.serializers import ProductSerializer
 from django.utils.decorators import method_decorator
 from api.decorators import auth_user_token
@@ -26,12 +27,11 @@ class ProductView(APIView):
     def post(self, *args, **kwargs):
         try:
             data = JSONParser().parse(self.request)
-            serializer = ProductSerializer(data=data)
+            serializer = ProductSerializer(data=data, many=True)
             if serializer.is_valid():
-                message, status, productId = createProduct(data)
+                message, status = product_bulk_insert(data)
                 common_response["message"] = message
                 common_response["status"] = status
-                data['id'] = productId
                 common_response["data"] = data
                 return JsonResponse(data = common_response, status=200)
             else:

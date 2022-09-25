@@ -16,7 +16,7 @@ class LoginView(APIView):
                 if checkUserLogin(data['email'],data['password']):
                     current_time = datetime.now()
                     current_unix_time = current_time.timestamp()
-                    expired_time = current_unix_time + (1 * 60)
+                    expired_time = current_unix_time + (100 * 60)
                     token = jwtEncode({
                         "email": data['email'],
                         "time": timezone.now().strftime("%Y-%m-%d %H:%M:%S %z"),

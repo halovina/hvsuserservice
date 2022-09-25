@@ -1,4 +1,5 @@
 from calendar import c
+from unicodedata import name
 from django.shortcuts import render
 from product.models import Product
 from django.db import connection
@@ -66,6 +67,26 @@ def deleteProduct(productId):
         else:
             response_status_code = "-1"
             message = "Data productId ({}) tidak ditemukan".format(productId)
+    except Exception as e:
+        response_status_code = "-1"
+        message = str(e)
+    return response_status_code, message
+
+
+
+def product_bulk_insert(data):
+    try:
+        instance_transaction = [
+            Product(
+                name = x['name'],
+                price = x['price'],
+                status = x['status']
+            )
+            for x in data
+        ]
+        Product.objects.bulk_create(instance_transaction)
+        response_status_code = "00"
+        message = "Create product ({} list data) success".format(len(data))
     except Exception as e:
         response_status_code = "-1"
         message = str(e)
