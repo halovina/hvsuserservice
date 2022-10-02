@@ -1,9 +1,11 @@
 
 
+import re
 from wsgiref import headers
 from django.urls import include, path, reverse
 from rest_framework.test import APITestCase, URLPatternsTestCase
 from django.contrib.auth.models import User
+from datetime import date
 
 def createMockUser():
     User.objects.create_user(username= "admin@example.com",
@@ -77,7 +79,37 @@ class ProductTest(APITestCase, URLPatternsTestCase):
         response = self.client.post("/api/v1/product/",data=payload_create_product, format='json', **{ "HTTP_AUTHORIZATION": "{}".format(rsp['token']) })
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['data'][0]['name'], 'product bulk 1')
-    
-    
         
         
+class FilterDownloadCSVTests(APITestCase):
+    def test_filter_product_by_date_success(self):
+        createMockUser()
+        payload_login = {
+            "email":"admin@example.com",
+            "password":"testXyz123"
+        }
+        rsp = getAuthToken(self,payload_login).json()
+        
+        payload_create_product = [
+            {
+                "name":"product bulk 1",
+                "price": 1000,
+                "status": "PENDING"
+            },
+            {
+                "name":"product bulk 2",
+                "price": 2000,
+                "status": "PUBLISH"
+            }
+        ]
+        self.client.post("/api/v1/product/",data=payload_create_product, format='json', **{ "HTTP_AUTHORIZATION": "{}".format(rsp['token']) })
+        
+        payload_filter_data = {
+            'date_from': date.today(),
+            'date_end': ''
+        }
+        response = self.client.post("/api/v1/product/filter/bydate",data=payload_filter_data, format='json', **{ "HTTP_AUTHORIZATION": "{}".format(rsp['token']) })
+       
+        self.assertEqual(response.json()['status'], '00')
+        self.assertEqual(response.json()['data']['total'], 2)
+    

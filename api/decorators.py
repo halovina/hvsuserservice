@@ -1,5 +1,5 @@
 from xml.dom.minidom import Element
-from api.pyjwt import jwtDecode
+from internal.pyjwt import jwtDecode
 from datetime import datetime
 from django.http import JsonResponse
 from rest_framework import status

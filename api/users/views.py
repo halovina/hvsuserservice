@@ -4,7 +4,7 @@ from api.serializers import LoginSerializer
 from rest_framework.parsers import JSONParser
 from users.views import checkUserLogin
 from django.http import JsonResponse
-from api.pyjwt import jwtEncode
+from internal.pyjwt import jwtEncode
 from django.utils import timezone
 
 class LoginView(APIView):

@@ -1,7 +1,8 @@
 from urllib import response
 from django.test import TestCase
 from product.models import Product
-from product.views import createProduct
+from product.views import createProduct, filterDataProductByDate
+from datetime import date
 
 # Create your tests here.
 class ModelsTestCase(TestCase):
@@ -26,22 +27,32 @@ class ModelsTestCase(TestCase):
         
     
 class ViewsTestCase(TestCase):
-    def test_sucess_createProduct(self):
-        data = {
+    compose_data = {
             "name" : "test 1",
             "price": "1000",
             "status" : "PENDING"
         }
-        response_status_code, message, _ = createProduct(data)
+    def test_sucess_createProduct(self):
+        response_status_code, message, _ = createProduct(self.compose_data)
         self.assertEqual(response_status_code, "00")
-        self.assertEqual(message, "Create product ({}) success".format(data['name']))
+        self.assertEqual(message, "Create product ({}) success".format(self.compose_data['name']))
         
     def test_exception_createProduct(self):
-        data = {
+        failed_compose_data = {
             "name" : "test 1",
-            "price": "test string",
+            "price": "testtt",
             "status" : "PENDING"
         }
-        response_status_code, message, _ = createProduct(data)
+        response_status_code, message, _ = createProduct(failed_compose_data)
         self.assertRaisesMessage(Exception, message)
         self.assertEqual(response_status_code, "-1")
+        
+    def test_filterDataProductByDate_with_data(self):
+        createProduct(self.compose_data)
+        filter_data = {
+            'date_from': date.today(),
+            'date_end': ''
+        }
+        resp, message = filterDataProductByDate(filter_data)
+        self.assertEqual(message, "Get list data product success")
+        
