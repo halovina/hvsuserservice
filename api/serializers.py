@@ -13,3 +13,8 @@ class ProductSerializer(serializers.Serializer):
 class FilterDataProduct(serializers.Serializer):
    date_from = serializers.CharField(max_length=35)
    date_end = serializers.CharField(max_length=35, allow_blank=True)
+   
+class RegisterNewUserSerializer(serializers.Serializer):
+   email = serializers.CharField(max_length=35)
+   password = serializers.CharField(max_length=35)
+   full_name = serializers.CharField(max_length=150)

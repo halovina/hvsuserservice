@@ -1,8 +1,8 @@
 from datetime import datetime
 from rest_framework.views import APIView
-from api.serializers import LoginSerializer
+from api.serializers import LoginSerializer, RegisterNewUserSerializer
 from rest_framework.parsers import JSONParser
-from users.views import checkUserLogin
+from users.views import checkUserLogin, create_register_user
 from django.http import JsonResponse
 from internal.pyjwt import jwtEncode
 from django.utils import timezone
@@ -34,6 +34,21 @@ class LoginView(APIView):
                 return JsonResponse(serializer.errors, status=400)
         except Exception as e:
             print(str(e))
+            return JsonResponse(data = {
+                            "message": str(e)
+                        }, status=400)
+            
+class RegisterNewUserView(APIView):
+    def post(self, *args, **kwargs):
+        try:
+            data = JSONParser().parse(self.request)
+            serializer = RegisterNewUserSerializer(data=data)
+            if serializer.is_valid():
+                resp = create_register_user(data)
+                return JsonResponse(data = resp, status=200)
+            else:
+                return JsonResponse(serializer.errors, status=400)
+        except Exception as e:
             return JsonResponse(data = {
                             "message": str(e)
                         }, status=400)

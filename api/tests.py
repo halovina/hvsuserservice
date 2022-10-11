@@ -40,6 +40,16 @@ class AccountTests(APITestCase, URLPatternsTestCase):
         response = self.client.post(url, data=payload, format='json')
         self.assertEqual(response.status_code, 400)
         
+    def test_succes_register_new_user(self):
+        payload = {
+            "email":"user@example.com",
+            "password":"password@1223G",
+            "full_name":"Test By Johan"
+        }
+        url = reverse('api_users_register')
+        response = self.client.post(url, data=payload, format='json')
+        self.assertEqual(response.status_code, 200)
+        
 class ProductTest(APITestCase, URLPatternsTestCase):
     urlpatterns = [
         path('api/', include('api.urls')),
