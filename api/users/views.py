@@ -6,6 +6,7 @@ from users.views import checkUserLogin, create_register_user
 from django.http import JsonResponse
 from internal.pyjwt import jwtEncode
 from django.utils import timezone
+from users.views import validate_token_url, activate_account_user
 
 class LoginView(APIView):
     def post(self, *args, **kwargs):
@@ -51,4 +52,33 @@ class RegisterNewUserView(APIView):
         except Exception as e:
             return JsonResponse(data = {
                             "message": str(e)
+                        }, status=400)
+            
+class UserLinkActivationView(APIView):
+    def get(self,request, token, *args, **kwargs):
+        try:
+            status, message = validate_token_url(token)
+            if status == True:
+                status, message = activate_account_user(token)
+                if status == False:
+                    resp = {
+                        'message': message,
+                        'status': '-1'
+                    }
+                    return JsonResponse(data = resp, status=200)
+                resp = {
+                    'message': "user activation success",
+                    'status': '00'
+                }
+                return JsonResponse(data = resp, status=200)
+            else:
+                resp = {
+                    'message': message,
+                    'status': '-1'
+                }
+                return JsonResponse(data = resp, status=200)
+        except Exception as e:
+            return JsonResponse(data = {
+                            "message": str(e),
+                            'status': '-1'
                         }, status=400)
